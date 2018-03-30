@@ -8,6 +8,11 @@ namespace Varnish\Log;
  */
 interface LogInterface
 {
+	/**
+	 * @return int
+	 */
+	public function getId() : int;
+
     /**
      * @return RequestInterface
      */

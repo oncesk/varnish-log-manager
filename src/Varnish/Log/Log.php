@@ -8,6 +8,11 @@ namespace Varnish\Log;
  */
 class Log implements LogInterface
 {
+	/**
+	 * @var int
+	 */
+	private $id;
+
     /**
      * @var RequestInterface
      */
@@ -25,18 +30,28 @@ class Log implements LogInterface
 
     /**
      * Log constructor.
+     * @param int $id
      * @param RequestInterface $request
      * @param ResponseInterface $response
      * @param array $varnishInfo
      */
-    public function __construct(RequestInterface $request, ResponseInterface $response, array $varnishInfo = [])
+    public function __construct(int $id, RequestInterface $request, ResponseInterface $response, array $varnishInfo = [])
     {
+    	$this->id = $id;
         $this->request = $request;
         $this->response = $response;
         $this->varnishInfo = $varnishInfo;
     }
 
-    /**
+	/**
+	 * @return int
+	 */
+	public function getId(): int
+	{
+		return $this->id;
+	}
+
+	/**
      * @inheritdoc
      */
     public function getRequest(): RequestInterface

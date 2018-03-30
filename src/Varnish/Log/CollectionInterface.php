@@ -18,4 +18,9 @@ interface CollectionInterface extends \Countable
      * @return LogInterface[]
      */
     public function getAll() : array;
+
+	/**
+	 * Clear collection
+	 */
+    public function clear();
 }

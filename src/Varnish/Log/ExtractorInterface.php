@@ -13,7 +13,7 @@ interface ExtractorInterface
 	/**
 	 * @param LogEntryInterface $logEntry
 	 * @param int $typeCode
-	 * @return string[][]|string
+	 * @return string[][]|string|null
 	 */
 	public function extract(LogEntryInterface $logEntry, int $typeCode);
 }

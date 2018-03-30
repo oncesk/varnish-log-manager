@@ -15,7 +15,7 @@ class Extractor implements ExtractorInterface
 	/**
 	 * @param LogEntryInterface $logEntry
 	 * @param int $typeCode
-	 * @return array
+	 * @return array|string[][]|string|null
 	 */
 	public function extract(LogEntryInterface $logEntry, int $typeCode)
 	{

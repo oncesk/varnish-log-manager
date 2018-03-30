@@ -38,4 +38,17 @@ class Collection implements CollectionInterface
     {
         return count($this->logs);
     }
+
+	/**
+	 * @inheritdoc
+	 */
+	public function clear()
+	{
+		$this->logs = [];
+	}
+
+	public function __clone()
+	{
+		$this->clear();
+	}
 }

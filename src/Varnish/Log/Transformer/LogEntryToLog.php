@@ -32,34 +32,39 @@ class LogEntryToLog implements LogEntryToLogInterface
 	}
 
 	/**
-	 * @param LogEntryInterface $logEntry
-	 * @return LogInterface
+	 * @inheritdoc
 	 */
 	public function transform(LogEntryInterface $logEntry): LogInterface
 	{
 		$requestHeaders = $this->extractor->extract($logEntry, ProviderInterface::TYPE_REQ_HEADER);
 		$responseHeaders = $this->extractor->extract($logEntry, ProviderInterface::TYPE_RES_HEADER);
 
+		$requestMethod = $this->extractor->extract($logEntry, ProviderInterface::TYPE_REQ_METHOD);
 
-		var_dump($this->extractor->extract($logEntry, ProviderInterface::TYPE_REQ_METHOD));
-
-		if (null === $this->extractor->extract($logEntry, ProviderInterface::TYPE_REQ_METHOD)) {
-			print_r($logEntry);
+		if (null === $requestMethod) {
+			$this->throwTransformationFailedException($logEntry);
 		}
 
 		$request = $this->createRequest(
-			$this->extractor->extract($logEntry, ProviderInterface::TYPE_REQ_METHOD),
+			$requestMethod,
 			$this->extractor->extract($logEntry, ProviderInterface::TYPE_REQ_URL)
 		);
 		$request->getHeaders()->replace($requestHeaders);
 
+		$responseStatus = $this->extractor->extract($logEntry, ProviderInterface::TYPE_RES_STATUS);
+
+		if (null === $responseStatus) {
+			$this->throwTransformationFailedException($logEntry);
+		}
+
 		$response = $this->createResponse(
-			$this->extractor->extract($logEntry, ProviderInterface::TYPE_RES_STATUS),
+			$responseStatus,
 			$this->extractor->extract($logEntry, ProviderInterface::TYPE_RES_REASON),
 			$responseHeaders
 		);
 
 		$log = new Log(
+			$logEntry->getId(),
 			$request,
 			$response
 		);
@@ -85,5 +90,19 @@ class LogEntryToLog implements LogEntryToLogInterface
 	protected function createResponse($statusCode, string $reason, array $headers)
 	{
 		return new Response($statusCode, $reason, new Headers($headers));
+	}
+
+	/**
+	 * @param LogEntryInterface $logEntry
+	 * @throws TransformationFailedException
+	 */
+	protected function throwTransformationFailedException(LogEntryInterface $logEntry)
+	{
+		throw new TransformationFailedException(
+			sprintf(
+				"Could not transform log entry wit id: %s",
+				$logEntry->getId()
+			)
+		);
 	}
 }
